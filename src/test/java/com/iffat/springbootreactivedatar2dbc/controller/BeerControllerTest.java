@@ -24,6 +24,15 @@ class BeerControllerTest {
     WebTestClient webTestClient;
 
     @Test
+    void testDeleteNotFound() {
+
+        webTestClient.delete()
+                .uri(BeerController.BEER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     void testPatchIdNotFound() {
 
         webTestClient.patch()
