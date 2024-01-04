@@ -1,5 +1,6 @@
 package com.iffat.springbootreactivedatar2dbc.controller;
 
+import com.iffat.springbootreactivedatar2dbc.domain.Customer;
 import com.iffat.springbootreactivedatar2dbc.model.BeerDTO;
 import com.iffat.springbootreactivedatar2dbc.model.CustomerDTO;
 import org.junit.jupiter.api.MethodOrderer;
@@ -23,6 +24,38 @@ class CustomerControllerTest {
     WebTestClient webTestClient;
 
     @Test
+    void testPatchNotfound() {
+
+        webTestClient.patch()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 888)
+                .body(Mono.just(getCustomer()), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testPatchBadData() {
+        CustomerDTO customerDTO = getCustomer();
+        customerDTO.setCustomerName("");
+
+        webTestClient.patch()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 1)
+                .body(Mono.just(customerDTO), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+
+    }
+
+    @Test
+    void testDeleteNotFound() {
+
+        webTestClient.delete()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     @Order(999)
     void testDeleteCustomer() {
 
@@ -30,6 +63,28 @@ class CustomerControllerTest {
                 .uri(CustomerController.CUSTOMER_PATH_ID, 1)
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testUpdateCustomerNotFound() {
+
+        webTestClient.put()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 999)
+                .body(Mono.just(getCustomer()), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testUpdateCustomerBadData() {
+        CustomerDTO customerDTO = getCustomer();
+        customerDTO.setCustomerName("");
+
+        webTestClient.put()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 1)
+                .body(Mono.just(customerDTO), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
@@ -44,6 +99,18 @@ class CustomerControllerTest {
     }
 
     @Test
+    void testCreateCustomerBadData() {
+        CustomerDTO customerDTO = getCustomer();
+        customerDTO.setCustomerName("");
+
+        webTestClient.post()
+                .uri(CustomerController.CUSTOMER_PATH)
+                .body(Mono.just(customerDTO), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
     void testCreateCustomer() {
 
         webTestClient.post()
@@ -53,6 +120,15 @@ class CustomerControllerTest {
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().location("http://localhost:8080/api/v2/customers/4");
+    }
+
+    @Test
+    void testGetCustomerByIdNotFound() {
+
+        webTestClient.get()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
