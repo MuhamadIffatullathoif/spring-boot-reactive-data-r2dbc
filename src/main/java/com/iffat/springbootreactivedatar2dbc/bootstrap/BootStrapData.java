@@ -1,7 +1,9 @@
 package com.iffat.springbootreactivedatar2dbc.bootstrap;
 
 import com.iffat.springbootreactivedatar2dbc.domain.Beer;
+import com.iffat.springbootreactivedatar2dbc.domain.Customer;
 import com.iffat.springbootreactivedatar2dbc.repositories.BeerRepository;
+import com.iffat.springbootreactivedatar2dbc.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,12 +17,38 @@ import java.util.List;
 public class BootStrapData implements CommandLineRunner {
 
     private final BeerRepository beerRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public void run(String... args) throws Exception {
         loadBeerData();
+        loadCustomerData();
         beerRepository.count().subscribe(count -> {
             System.out.println("Count is: " + count);
+        });
+
+        customerRepository.count().subscribe(count -> {
+            System.out.println("Count is: " + count);
+        });
+    }
+
+    private void loadCustomerData() {
+        customerRepository.count().subscribe(count -> {
+            if (count == 0) {
+                Customer customer = Customer.builder()
+                        .customerName("Customer 1")
+                        .build();
+
+                Customer customer1 = Customer.builder()
+                        .customerName("Customer 2")
+                        .build();
+
+                Customer customer2 = Customer.builder()
+                        .customerName("Customer 3")
+                        .build();
+
+                customerRepository.saveAll(List.of(customer, customer1, customer2)).subscribe();
+            }
         });
     }
 
