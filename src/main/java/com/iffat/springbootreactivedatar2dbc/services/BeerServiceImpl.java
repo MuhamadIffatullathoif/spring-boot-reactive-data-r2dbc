@@ -16,6 +16,12 @@ public class BeerServiceImpl implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
 
+
+    @Override
+    public Mono<Void> deleteBeerById(Integer beerId) {
+        return beerRepository.deleteById(beerId);
+    }
+
     @Override
     public Mono<BeerDTO> patchBeer(Integer beerId, BeerDTO beerDTO) {
         return beerRepository.findById(beerId)
